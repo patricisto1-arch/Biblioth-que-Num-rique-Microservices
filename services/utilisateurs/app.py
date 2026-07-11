@@ -68,13 +68,13 @@ def create_user():
     try:
         connection = get_db_connection()
         with connection.cursor() as cursor:
-            # Insertion du nouvel utilisateur - RETURNING id récupère l'ID généré (syntaxe PostgreSQL)
+            # Insertion du nouvel utilisateur - RETURNING id récupère l'ID généré 
             sql = "INSERT INTO utilisateurs (nom, email, type) VALUES (%s, %s, %s) RETURNING id"
             cursor.execute(sql, (nom, email, role))
             user_id = cursor.fetchone()['id']
         connection.commit()
 
-        # Récupération des informations insérées (alias type -> role pour l'API)
+        # Récupération des informations insérées 
         with connection.cursor() as cursor:
             cursor.execute("SELECT id, nom, email, type AS role, date_creation FROM utilisateurs WHERE id = %s", (user_id,))
             created_user = cursor.fetchone()
