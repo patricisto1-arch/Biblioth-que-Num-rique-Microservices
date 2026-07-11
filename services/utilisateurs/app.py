@@ -10,25 +10,28 @@ app = Flask(__name__)
 # Active CORS pour toutes les routes pour faciliter l'intégration avec le frontend
 CORS(app)
 
-# Configuration de la base de données via variables d'environnement
-DB_HOST = os.environ.get('DB_HOST', 'localhost')
-DB_USER = os.environ.get('DB_USER', 'postgres')
-DB_PASSWORD = os.environ.get('DB_PASSWORD', 'rootpassword')
-DB_NAME = os.environ.get('DB_NAME', 'bibliotheque')
-DB_PORT = int(os.environ.get('DB_PORT', 5432))
+# Configuration de la base de données via variables d'environnement.
+# Priorité à DATABASE_URL (format utilisé par le docker-compose.yml de l'équipe),
+# avec repli sur les variables séparées DB_HOST/DB_USER/... pour les tests locaux.
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if not DATABASE_URL:
+    DB_HOST = os.environ.get('DB_HOST', 'localhost')
+    DB_USER = os.environ.get('DB_USER', 'postgres')
+    DB_PASSWORD = os.environ.get('DB_PASSWORD', 'rootpassword')
+    DB_NAME = os.environ.get('DB_NAME', 'bibliotheque')
+    DB_PORT = int(os.environ.get('DB_PORT', 5432))
+    DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 def get_db_connection():
     """
     Crée et retourne une nouvelle connexion à la base de données PostgreSQL.
     """
     return psycopg2.connect(
-        host=DB_HOST,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        dbname=DB_NAME,
-        port=DB_PORT,
+        DATABASE_URL,
         cursor_factory=psycopg2.extras.RealDictCursor
     )
+
 
 @app.route('/health', methods=['GET'])
 def health():
@@ -68,13 +71,13 @@ def create_user():
     try:
         connection = get_db_connection()
         with connection.cursor() as cursor:
-            # Insertion du nouvel utilisateur - RETURNING id récupère l'ID généré 
+            # Insertion du nouvel utilisateur - RETURNING id récupère l'ID généré (syntaxe PostgreSQL)
             sql = "INSERT INTO utilisateurs (nom, email, type) VALUES (%s, %s, %s) RETURNING id"
             cursor.execute(sql, (nom, email, role))
             user_id = cursor.fetchone()['id']
         connection.commit()
 
-        # Récupération des informations insérées 
+        # Récupération des informations insérées (alias type -> role pour l'API)
         with connection.cursor() as cursor:
             cursor.execute("SELECT id, nom, email, type AS role, date_creation FROM utilisateurs WHERE id = %s", (user_id,))
             created_user = cursor.fetchone()
@@ -151,5 +154,8 @@ def get_user(user_id):
         return jsonify({"error": "Erreur serveur lors de la consultation.", "details": str(e)}), 500
 
 if __name__ == '__main__':
-    # Lance le serveur Flask de développement sur le port 5000
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Lance le serveur Flask de développement.
+    # PORT vient du docker-compose.yml de l'équipe (8002 pour ce service) ;
+    # 5000 par défaut pour les tests locaux hors Docker.
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)

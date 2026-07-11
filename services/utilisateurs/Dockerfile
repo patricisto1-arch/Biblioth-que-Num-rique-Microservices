@@ -23,8 +23,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     DB_USER=postgres \
     DB_PASSWORD=rootpassword \
     DB_NAME=bibliotheque \
-    DB_PORT=5432
+    DB_PORT=5432 \
+    PORT=5000
 
 EXPOSE 5000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+# Forme shell (pas exec) pour permettre l'expansion de la variable $PORT,
+# fournie par le docker-compose.yml de l'équipe (8002 pour ce service)
+CMD gunicorn --bind 0.0.0.0:$PORT app:app
