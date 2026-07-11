@@ -1,43 +1,48 @@
--- ==========================================================================
--- Schéma relationnel — Bibliothèque Numérique Microservices (MySQL)
--- Un seul schéma partagé entre les 3 services (Livres, Utilisateurs, Emprunts)
--- ==========================================================================
+﻿-- ==========================================
+-- Schema : Bibliotheque Numerique Microservices
+-- Base : PostgreSQL
+-- ==========================================
 
+-- Table Utilisateurs
 CREATE TABLE IF NOT EXISTS utilisateurs (
-    id              INT AUTO_INCREMENT PRIMARY KEY,
-    nom             VARCHAR(100) NOT NULL,
-    prenom          VARCHAR(100) NOT NULL,
-    email           VARCHAR(150) UNIQUE NOT NULL,
-    type_utilisateur ENUM('Etudiant', 'Professeur', 'Personnel administratif') NOT NULL,
-    date_creation   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id SERIAL PRIMARY KEY,
+    nom VARCHAR(150) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    type VARCHAR(30) NOT NULL CHECK (type IN ('etudiant', 'professeur', 'personnel')),
+    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Table Livres
 CREATE TABLE IF NOT EXISTS livres (
-    id              INT AUTO_INCREMENT PRIMARY KEY,
-    titre           VARCHAR(200) NOT NULL,
-    auteur          VARCHAR(150) NOT NULL,
-    isbn            VARCHAR(20) UNIQUE NOT NULL,
-    disponible      BOOLEAN DEFAULT TRUE,
-    date_ajout      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id SERIAL PRIMARY KEY,
+    titre VARCHAR(255) NOT NULL,
+    auteur VARCHAR(255) NOT NULL,
+    isbn VARCHAR(20) UNIQUE NOT NULL,
+    disponible BOOLEAN DEFAULT TRUE,
+    date_ajout TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Table Emprunts
 CREATE TABLE IF NOT EXISTS emprunts (
-    id                      INT AUTO_INCREMENT PRIMARY KEY,
-    livre_id                INT NOT NULL,
-    utilisateur_id           INT NOT NULL,
-    date_emprunt            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    date_retour_prevue      TIMESTAMP NULL,
-    date_retour_effective   TIMESTAMP NULL,
-    statut                  ENUM('en_cours', 'retourne', 'en_retard') DEFAULT 'en_cours',
-    FOREIGN KEY (livre_id) REFERENCES livres(id),
-    FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id)
+    id SERIAL PRIMARY KEY,
+    utilisateur_id INTEGER NOT NULL REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    livre_id INTEGER NOT NULL REFERENCES livres(id) ON DELETE CASCADE,
+    date_emprunt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    date_retour TIMESTAMP,
+    statut VARCHAR(20) NOT NULL DEFAULT 'en_cours' CHECK (statut IN ('en_cours', 'retourne'))
 );
 
--- Quelques données de test
-INSERT INTO utilisateurs (nom, prenom, email, type_utilisateur) VALUES
-    ('Diop', 'Faty', 'faty.diop@dit.edu', 'Etudiant'),
-    ('Ndiaye', 'Amadou', 'amadou.ndiaye@dit.edu', 'Professeur');
+-- Index
+CREATE INDEX idx_livres_titre ON livres(titre);
+CREATE INDEX idx_livres_auteur ON livres(auteur);
+CREATE INDEX idx_emprunts_utilisateur ON emprunts(utilisateur_id);
+CREATE INDEX idx_emprunts_livre ON emprunts(livre_id);
+
+-- Donnees de test
+INSERT INTO utilisateurs (nom, email, type) VALUES
+    ('Fatou Diop', 'fatou.diop@dit.sn', 'etudiant'),
+    ('M. Ndiaye', 'ndiaye@dit.sn', 'professeur');
 
 INSERT INTO livres (titre, auteur, isbn, disponible) VALUES
-    ('Clean Code', 'Robert C. Martin', '9780132350884', TRUE),
-    ('Design Patterns', 'Gang of Four', '9780201633610', TRUE);
+    ('Une si longue lettre', 'Mariama Ba', '978-2708702011', TRUE),
+    ('Le Ventre de l''Atlantique', 'Fatou Diome', '978-2253108336', TRUE);
