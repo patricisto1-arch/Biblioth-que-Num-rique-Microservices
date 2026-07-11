@@ -25,4 +25,4 @@ class Config:
         "UTILISATEURS_SERVICE_URL", "http://utilisateurs:5000"
     )
 
-    PORT = int(os.environ.get("PORT", 5003))
+    PORT = int(os.environ.get("PORT", 8003))
