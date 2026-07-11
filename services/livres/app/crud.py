@@ -1,12 +1,19 @@
+
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
+from sqlalchemy.exc import IntegrityError
+from fastapi import HTTPException
 from . import models, schemas
 
 
 def create_livre(db: Session, livre: schemas.LivreCreate):
     db_livre = models.Livre(**livre.dict())
     db.add(db_livre)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(status_code=400, detail="Un livre avec cet ISBN existe déjà")
     db.refresh(db_livre)
     return db_livre
 

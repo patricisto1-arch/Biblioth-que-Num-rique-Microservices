@@ -45,6 +45,15 @@ def modifier_livre(livre_id: int, livre: schemas.LivreUpdate, db: Session = Depe
         raise HTTPException(status_code=404, detail="Livre non trouvé")
     return db_livre
 
+@app.patch("/livres/{livre_id}/disponibilite", response_model=schemas.LivreOut)
+def changer_disponibilite(livre_id: int, disponible: bool, db: Session = Depends(get_db)):
+    db_livre = crud.get_livre(db, livre_id)
+    if not db_livre:
+        raise HTTPException(status_code=404, detail="Livre non trouvé")
+    db_livre.disponible = disponible
+    db.commit()
+    db.refresh(db_livre)
+    return db_livre
 
 @app.delete("/livres/{livre_id}")
 def supprimer_livre(livre_id: int, db: Session = Depends(get_db)):
