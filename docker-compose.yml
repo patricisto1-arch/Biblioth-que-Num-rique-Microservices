@@ -2,31 +2,30 @@ version: "3.9"
 
 # ==========================================================================
 # Bibliothèque Numérique Microservices — Orchestration Docker Compose
-# Stack : Flask (backends) + React (frontend) + MySQL + Docker + Jenkins
+# Stack : Flask (backends) + React (frontend) + PostgreSQL + Docker + Jenkins
 # Tâche 5 (DevOps/CI-CD)
 
 services:
 
   # --------------------------------------------------------------------
-  # Base de données relationnelle (MySQL)
+  # Base de données (PostgreSQL)
   # --------------------------------------------------------------------
   db:
-    image: mysql:8.0
-    container_name: bibliotheque_db
-    restart: unless-stopped
+    image: postgres:15-alpine
+    container_name: database-biblio
     environment:
-      MYSQL_ROOT_PASSWORD: root_pass
-      MYSQL_DATABASE: bibliotheque
-      MYSQL_USER: biblio_user
-      MYSQL_PASSWORD: biblio_pass
+      POSTGRES_USER: user_biblio
+      POSTGRES_PASSWORD: password_secure
+      POSTGRES_DB: library_db
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - db_data:/var/lib/mysql
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      # Chargement automatique du schéma fourni par le chef
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_pass"]
-      interval: 10s
+      test: ["CMD-SHELL", "pg_isready -U user_biblio -d library_db"]
+      interval: 5s
       timeout: 5s
       retries: 5
     networks:
@@ -42,7 +41,7 @@ services:
     container_name: service_livres
     restart: unless-stopped
     environment:
-      DATABASE_URL: mysql+pymysql://biblio_user:biblio_pass@db:3306/bibliotheque
+      DATABASE_URL: postgresql://user_biblio:password_secure@db:5432/library_db
       PORT: 8001
     ports:
       - "8001:8001"
@@ -62,7 +61,7 @@ services:
     container_name: service_utilisateurs
     restart: unless-stopped
     environment:
-      DATABASE_URL: mysql+pymysql://biblio_user:biblio_pass@db:3306/bibliotheque
+      DATABASE_URL: postgresql://user_biblio:password_secure@db:5432/library_db
       PORT: 8002
     ports:
       - "8002:8002"
@@ -74,7 +73,6 @@ services:
 
   # --------------------------------------------------------------------
   # Microservice Emprunts (Flask)
-  # Appelle Livres et Utilisateurs via leurs noms de service Docker
   # --------------------------------------------------------------------
   emprunts:
     build:
@@ -83,7 +81,7 @@ services:
     container_name: service_emprunts
     restart: unless-stopped
     environment:
-      DATABASE_URL: mysql+pymysql://biblio_user:biblio_pass@db:3306/bibliotheque
+      DATABASE_URL: postgresql://user_biblio:password_secure@db:5432/library_db
       LIVRES_SERVICE_URL: http://livres:8001
       UTILISATEURS_SERVICE_URL: http://utilisateurs:8002
       PORT: 8003
@@ -101,7 +99,6 @@ services:
 
   # --------------------------------------------------------------------
   # Frontend (React)
-  # Consomme les 3 API ci-dessus
   # --------------------------------------------------------------------
   frontend:
     build:
@@ -127,4 +124,4 @@ networks:
     driver: bridge
 
 volumes:
-  db_data:
+  postgres_data:
