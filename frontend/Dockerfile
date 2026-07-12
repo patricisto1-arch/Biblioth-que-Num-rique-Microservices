@@ -8,9 +8,9 @@ RUN npm ci
 
 COPY . .
 
-ARG VITE_API_BOOKS_URL=http://localhost:8081/api/livres
-ARG VITE_API_USERS_URL=http://localhost:8082/api/utilisateurs
-ARG VITE_API_LOANS_URL=http://localhost:8083/api/emprunts
+ARG VITE_API_BOOKS_URL=http://localhost:8001/api/livres
+ARG VITE_API_USERS_URL=http://localhost:8002/api/utilisateurs
+ARG VITE_API_LOANS_URL=http://localhost:8003/api/emprunts
 ARG VITE_USE_MOCKS=false
 
 ENV VITE_API_BOOKS_URL=$VITE_API_BOOKS_URL
