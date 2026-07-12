@@ -21,12 +21,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     FLASK_ENV=production \
     DB_HOST=db \
     DB_USER=postgres \
-    DB_PASSWORD=rootpassword \
     DB_NAME=bibliotheque \
     DB_PORT=5432 \
-    PORT=5000
+    PORT=8002
 
-EXPOSE 5000
+EXPOSE 8002
 
 # Forme shell (pas exec) pour permettre l'expansion de la variable $PORT,
 # fournie par le docker-compose.yml de l'équipe (8002 pour ce service)
