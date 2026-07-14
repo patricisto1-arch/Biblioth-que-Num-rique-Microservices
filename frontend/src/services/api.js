@@ -12,15 +12,15 @@ function createClient(baseURL) {
 }
 
 export const booksApi = createClient(
-  import.meta.env.VITE_API_BOOKS_URL || "http://localhost:8081/api/livres"
+  import.meta.env.VITE_API_BOOKS_URL || "http://localhost:8001/api/livres"
 );
 
 export const usersApi = createClient(
-  import.meta.env.VITE_API_USERS_URL || "http://localhost:8082/api/utilisateurs"
+  import.meta.env.VITE_API_USERS_URL || "http://localhost:8002/api/utilisateurs"
 );
 
 export const loansApi = createClient(
-  import.meta.env.VITE_API_LOANS_URL || "http://localhost:8083/api/emprunts"
+  import.meta.env.VITE_API_LOANS_URL || "http://localhost:8003/api/emprunts"
 );
 
 export function extractErrorMessage(error) {
