@@ -10,6 +10,12 @@ import { listerUtilisateurs } from "../../services/userService";
 import { historiqueEmprunts } from "../../services/loanService";
 import { extractErrorMessage } from "../../services/api";
 
+const cartes = [
+  { key: "livres", label: "Total Livres", icon: FaBook, bg: "#e6ebf3", color: "#1b2a4a" },
+  { key: "utilisateurs", label: "Utilisateurs", icon: FaUsers, bg: "#e2efe1", color: "#2c6e3f" },
+  { key: "empruntsEnCours", label: "Emprunts en cours", icon: FaExchangeAlt, bg: "#f0dcb8", color: "#8a5a1e" },
+];
+
 export default function Dashboard() {
   const [stats, setStats] = useState({ livres: 0, utilisateurs: 0, empruntsEnCours: 0 });
   const [chargement, setChargement] = useState(true);
@@ -39,56 +45,30 @@ export default function Dashboard() {
   return (
     <MainLayout>
       <div className="container-fluid">
-
-        <h2 className="mb-4 fw-bold">
+        <p className="text-uppercase small fw-semibold mb-1" style={{ color: "var(--bs-secondary)", letterSpacing: "0.08em" }}>
           Tableau de bord
-        </h2>
+        </p>
+        <h2 className="mb-4 fw-bold">Bibliothèque Numérique - DIT</h2>
 
         {erreur && <div className="alert alert-danger">{erreur}</div>}
 
         <div className="row g-4">
-
-          <div className="col-md-4">
-            <div className="card shadow border-0">
-              <div className="card-body d-flex justify-content-between align-items-center">
-                <div>
-                  <h6>Total Livres</h6>
-                  <h2>{chargement ? "…" : stats.livres}</h2>
+          {cartes.map(({ key, label, icon: Icon, bg, color }) => (
+            <div className="col-md-4" key={key}>
+              <div className="card shadow-hover border-0">
+                <div className="card-body d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 className="text-muted mb-1" style={{ fontFamily: "Inter" }}>{label}</h6>
+                    <h2 className="mb-0">{chargement ? "…" : stats[key]}</h2>
+                  </div>
+                  <div className="stat-icon-wrap" style={{ background: bg }}>
+                    <Icon size={22} style={{ color }} />
+                  </div>
                 </div>
-
-                <FaBook size={40} className="text-primary"/>
               </div>
             </div>
-          </div>
-
-          <div className="col-md-4">
-            <div className="card shadow border-0">
-              <div className="card-body d-flex justify-content-between align-items-center">
-                <div>
-                  <h6>Utilisateurs</h6>
-                  <h2>{chargement ? "…" : stats.utilisateurs}</h2>
-                </div>
-
-                <FaUsers size={40} className="text-success"/>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-md-4">
-            <div className="card shadow border-0">
-              <div className="card-body d-flex justify-content-between align-items-center">
-                <div>
-                  <h6>Emprunts en cours</h6>
-                  <h2>{chargement ? "…" : stats.empruntsEnCours}</h2>
-                </div>
-
-                <FaExchangeAlt size={40} className="text-danger"/>
-              </div>
-            </div>
-          </div>
-
+          ))}
         </div>
-
       </div>
     </MainLayout>
   );

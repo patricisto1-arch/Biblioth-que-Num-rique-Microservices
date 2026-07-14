@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   FaBook,
   FaUsers,
@@ -6,49 +6,37 @@ import {
   FaChartPie,
 } from "react-icons/fa";
 
+const links = [
+  { to: "/", label: "Dashboard", icon: FaChartPie, end: true },
+  { to: "/books", label: "Livres", icon: FaBook },
+  { to: "/users", label: "Utilisateurs", icon: FaUsers },
+  { to: "/loans", label: "Emprunts", icon: FaExchangeAlt },
+];
+
 export default function Sidebar() {
   return (
-    <div
-      className="bg-primary text-white p-3"
-      style={{ width: "250px", minHeight: "100vh" }}
-    >
-      <div className="text-center mb-5">
-        <h3>📚</h3>
-        <h5>Bibliothèque</h5>
-        <small>DIT</small>
-      </div>
+    <div className="sidebar">
+      <div className="brand">
+        <div className="brand-badge">DIT</div>
+        <div>
+          <p className="brand-title">Bibliothèque</p>
+          <p className="brand-sub">Numérique</p>
+        </div>
+        </div>
 
-      <ul className="nav flex-column">
-
-        <li className="nav-item mb-3">
-          <Link className="nav-link text-white" to="/">
-            <FaChartPie className="me-2" />
-            Dashboard
-          </Link>
-        </li>
-
-        <li className="nav-item mb-3">
-          <Link className="nav-link text-white" to="/books">
-            <FaBook className="me-2" />
-            Livres
-          </Link>
-        </li>
-
-        <li className="nav-item mb-3">
-          <Link className="nav-link text-white" to="/users">
-            <FaUsers className="me-2" />
-            Utilisateurs
-          </Link>
-        </li>
-
-        <li className="nav-item">
-          <Link className="nav-link text-white" to="/loans">
-            <FaExchangeAlt className="me-2" />
-            Emprunts
-          </Link>
-        </li>
-
-      </ul>
+      <nav className="nav flex-column">
+        {links.map(({ to, label, icon: Icon, end }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end={end}
+            className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}
+          >
+            <Icon className="me-2" />
+            {label}
+          </NavLink>
+        ))}
+      </nav>
     </div>
   );
 }
