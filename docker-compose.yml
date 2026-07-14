@@ -111,7 +111,7 @@ services:
       REACT_APP_UTILISATEURS_API: http://localhost:8002
       REACT_APP_EMPRUNTS_API: http://localhost:8003
     ports:
-      - "3000:3000"
+      - "3000:80"
     depends_on:
       - livres
       - utilisateurs
