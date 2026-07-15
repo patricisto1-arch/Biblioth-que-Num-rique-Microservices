@@ -12,7 +12,6 @@ services:
   # --------------------------------------------------------------------
   db:
     image: postgres:15-alpine
-    container_name: database-biblio
     environment:
       POSTGRES_USER: user_biblio
       POSTGRES_PASSWORD: password_secure
@@ -38,7 +37,6 @@ services:
     build:
       context: ./services/livres
       dockerfile: Dockerfile
-    container_name: service_livres
     restart: unless-stopped
     environment:
       DATABASE_URL: postgresql://user_biblio:password_secure@db:5432/library_db
@@ -58,7 +56,6 @@ services:
     build:
       context: ./services/utilisateurs
       dockerfile: Dockerfile
-    container_name: service_utilisateurs
     restart: unless-stopped
     environment:
       DATABASE_URL: postgresql://user_biblio:password_secure@db:5432/library_db
@@ -78,7 +75,6 @@ services:
     build:
       context: ./services/emprunts
       dockerfile: Dockerfile
-    container_name: service_emprunts
     restart: unless-stopped
     environment:
       DATABASE_URL: postgresql://user_biblio:password_secure@db:5432/library_db
@@ -104,14 +100,13 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: biblio_frontend
     restart: unless-stopped
     environment:
       REACT_APP_LIVRES_API: http://localhost:8001
       REACT_APP_UTILISATEURS_API: http://localhost:8002
       REACT_APP_EMPRUNTS_API: http://localhost:8003
     ports:
-      - "3000:80"
+      - "3000:3000"
     depends_on:
       - livres
       - utilisateurs
