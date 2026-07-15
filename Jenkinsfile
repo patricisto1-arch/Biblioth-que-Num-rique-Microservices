@@ -1,9 +1,9 @@
 // ==========================================================================
 // Jenkinsfile — Pipeline CI/CD
 // Bibliothèque Numérique Microservices — Tâche 5 (DevOps/CI-CD)
-// Stack : Flask + React + MySQL + Docker
+// Stack : Flask + FastAPI + React + PostgreSQL + Docker
 //
-// Stages : Checkout -> Build -> Build images Docker -> Déploiement
+// Stages : Checkout -> Build & Test -> Build images Docker -> Déploiement
 //
 // PRÉREQUIS si Jenkins tourne dans un conteneur Docker :
 //   - Monter le socket Docker de l'hôte dans le conteneur Jenkins :
@@ -14,12 +14,6 @@
 //         jenkins/jenkins:lts
 //   - Installer le client Docker DANS l'image Jenkins.
 //   - L'utilisateur Jenkins doit pouvoir exécuter docker (groupe "docker").
-// ==========================================================================
-
-// ==========================================================================
-// Jenkinsfile — Pipeline CI/CD
-// Bibliothèque Numérique Microservices — Tâche 5 (DevOps/CI-CD)
-// Stack : Flask + FastAPI + React + PostgreSQL + Docker
 // ==========================================================================
 
 pipeline {
@@ -82,5 +76,4 @@ pipeline {
             sh 'docker compose ps'
         }
     }
-}
 }
