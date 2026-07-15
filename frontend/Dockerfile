@@ -8,9 +8,12 @@ RUN npm ci
 
 COPY . .
 
-ARG VITE_API_BOOKS_URL=http://localhost:8001/api/livres
-ARG VITE_API_USERS_URL=http://localhost:8002/api/utilisateurs
-ARG VITE_API_LOANS_URL=http://localhost:8003/api/emprunts
+# Requests are proxied by nginx inside the Compose network.  Do not bake
+# localhost service URLs into the browser bundle: there, localhost is the
+# visitor's machine rather than a Docker service.
+ARG VITE_API_BOOKS_URL=/api/livres
+ARG VITE_API_USERS_URL=/api/utilisateurs
+ARG VITE_API_LOANS_URL=/api/emprunts
 ARG VITE_USE_MOCKS=false
 
 ENV VITE_API_BOOKS_URL=$VITE_API_BOOKS_URL

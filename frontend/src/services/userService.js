@@ -5,7 +5,7 @@ let mockStore = [...mockUsers];
 
 export async function listerUtilisateurs() {
   if (USE_MOCKS) return mockStore;
-  const { data } = await usersApi.get("/");
+  const { data } = await usersApi.get("");
   return data;
 }
 
@@ -15,6 +15,6 @@ export async function creerUtilisateur(utilisateur) {
     mockStore = [...mockStore, nouveau];
     return nouveau;
   }
-  const { data } = await usersApi.post("/", utilisateur);
+  const { data } = await usersApi.post("", utilisateur);
   return data;
 }

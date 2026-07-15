@@ -124,7 +124,7 @@ def register_routes(app):
         try:
             requests.patch(
                 f"{app.config['LIVRES_SERVICE_URL']}/livres/{livre_id}/disponibilite",
-                json={"disponible": False},
+                params={"disponible": False},
                 timeout=5,
             )
         except requests.RequestException:
@@ -150,7 +150,7 @@ def register_routes(app):
         try:
             requests.patch(
                 f"{app.config['LIVRES_SERVICE_URL']}/livres/{emprunt.livre_id}/disponibilite",
-                json={"disponible": True},
+                params={"disponible": True},
                 timeout=5,
             )
         except requests.RequestException:

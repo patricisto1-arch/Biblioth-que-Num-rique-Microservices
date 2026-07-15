@@ -52,7 +52,7 @@ export default function Loans() {
 
   function nomUtilisateur(id) {
     const u = utilisateurs.find((u) => u.id === id);
-    return u ? `${u.prenom} ${u.nom}` : `#${id}`;
+    return u ? u.nom : `#${id}`;
   }
 
   async function soumettre(e) {
@@ -117,7 +117,7 @@ export default function Loans() {
                   <option value="">Sélectionner un utilisateur</option>
                   {utilisateurs.map((u) => (
                     <option key={u.id} value={u.id}>
-                      {u.prenom} {u.nom}
+                      {u.nom}
                     </option>
                   ))}
                 </select>

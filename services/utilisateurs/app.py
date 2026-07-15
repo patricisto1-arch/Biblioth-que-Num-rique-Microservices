@@ -7,6 +7,7 @@ import psycopg2.extras
 import psycopg2.errors
 
 app = Flask(__name__)
+app.url_map.strict_slashes = False
 # Active CORS pour toutes les routes pour faciliter l'intégration avec le frontend
 CORS(app)
 

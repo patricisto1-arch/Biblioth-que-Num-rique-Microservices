@@ -4,18 +4,18 @@ import MainLayout from "../../components/layout/MainLayout";
 import { listerUtilisateurs, creerUtilisateur } from "../../services/userService";
 import { extractErrorMessage } from "../../services/api";
 
-const vide = { nom: "", prenom: "", email: "", type: "ETUDIANT", matricule: "" };
+const vide = { nom: "", email: "", role: "etudiant" };
 
 const libelleType = {
-  ETUDIANT: "Étudiant",
-  PROFESSEUR: "Professeur",
-  PERSONNEL_ADMIN: "Personnel administratif",
+  etudiant: "Étudiant",
+  professeur: "Professeur",
+  personnel: "Personnel administratif",
 };
 
 const badgeType = {
-  ETUDIANT: "bg-success",
-  PROFESSEUR: "bg-warning text-dark",
-  PERSONNEL_ADMIN: "bg-secondary",
+  etudiant: "bg-success",
+  professeur: "bg-warning text-dark",
+  personnel: "bg-secondary",
 };
 
 export default function Users() {
@@ -76,16 +76,7 @@ export default function Users() {
           <div className="card-body">
             <form onSubmit={soumettre}>
               <div className="row g-3">
-                <div className="col-md-3">
-                  <label className="form-label">Prénom</label>
-                  <input
-                    className="form-control"
-                    required
-                    value={form.prenom}
-                    onChange={(e) => setForm({ ...form, prenom: e.target.value })}
-                  />
-                </div>
-                <div className="col-md-3">
+                <div className="col-md-4">
                   <label className="form-label">Nom</label>
                   <input
                     className="form-control"
@@ -94,7 +85,7 @@ export default function Users() {
                     onChange={(e) => setForm({ ...form, nom: e.target.value })}
                   />
                 </div>
-                <div className="col-md-3">
+                <div className="col-md-4">
                   <label className="form-label">Email</label>
                   <input
                     type="email"
@@ -104,25 +95,17 @@ export default function Users() {
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                   />
                 </div>
-                <div className="col-md-3">
+                <div className="col-md-4">
                   <label className="form-label">Type</label>
                   <select
                     className="form-select"
-                    value={form.type}
-                    onChange={(e) => setForm({ ...form, type: e.target.value })}
+                    value={form.role}
+                    onChange={(e) => setForm({ ...form, role: e.target.value })}
                   >
-                    <option value="ETUDIANT">Étudiant</option>
-                    <option value="PROFESSEUR">Professeur</option>
-                    <option value="PERSONNEL_ADMIN">Personnel administratif</option>
+                    <option value="etudiant">Étudiant</option>
+                    <option value="professeur">Professeur</option>
+                    <option value="personnel">Personnel administratif</option>
                   </select>
-                </div>
-                <div className="col-md-4">
-                  <label className="form-label">Matricule (optionnel)</label>
-                  <input
-                    className="form-control"
-                    value={form.matricule}
-                    onChange={(e) => setForm({ ...form, matricule: e.target.value })}
-                  />
                 </div>
               </div>
               <div className="d-flex justify-content-end gap-2 mt-3">
@@ -151,20 +134,18 @@ export default function Users() {
                   <th>Nom</th>
                   <th>Email</th>
                   <th>Type</th>
-                  <th>Matricule</th>
                 </tr>
               </thead>
               <tbody>
                 {utilisateurs.map((u) => (
                   <tr key={u.id}>
                     <td>
-                      <strong>{u.prenom} {u.nom}</strong>
+                      <strong>{u.nom}</strong>
                     </td>
                     <td>{u.email}</td>
                     <td>
-                      <span className={`badge ${badgeType[u.type]}`}>{libelleType[u.type]}</span>
+                      <span className={`badge ${badgeType[u.role]}`}>{libelleType[u.role]}</span>
                     </td>
-                    <td className="font-monospace small">{u.matricule || "—"}</td>
                   </tr>
                 ))}
               </tbody>
